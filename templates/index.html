@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>द्विभाषी चुटकुले जनरेटर | Bilingual Joke Generator</title>
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --secondary: #2196F3;
+            --hindi-text: #E91E63;
+        }
+        body {
+            font-family: 'Segoe UI', 'Nirmala UI', Tahoma, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .language-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 5px;
+        }
+        .category-selector {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f1f8e9;
+            border-radius: 5px;
+        }
+        .joke-container {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+        }
+        .hindi {
+            color: var(--hindi-text);
+            font-size: 1.1em;
+            line-height: 1.8;
+            font-family: 'Nirmala UI', 'Segoe UI', sans-serif;
+        }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background-color: #388E3C;
+            transform: translateY(-2px);
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #757575;
+        }
+        input[type="radio"] {
+            margin: 0 5px 0 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bilingual Joke Generator</h1>
+        <h2 style="color: var(--hindi-text);">द्विभाषी चुटकुले जनरेटर</h2>
+        
+        <form method="POST">
+            <div class="language-selector">
+                <h3>🌐 Select Language / भाषा चुनें:</h3>
+                <input type="radio" id="english" name="language" value="english" checked>
+                <label for="english">English</label>
+                
+                <input type="radio" id="hindi" name="language" value="hindi">
+                <label for="hindi">हिंदी</label>
+            </div>
+            
+            <div class="category-selector" id="english-category">
+                <h3>🗂️ Select Category (English) / श्रेणी चुनें:</h3>
+                <select name="category">
+                    {% for key, value in english_categories.items() %}
+                        <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div style="text-align: center;">
+                <button type="submit" name="single_joke">😂 Get 1 Joke / 1 चुटकुला</button>
+                <button type="submit" name="five_jokes">🤣 Get 5 Jokes / 5 चुटकुले</button>
+            </div>
+        </form>
+        
+        {% if joke %}
+            <div class="joke-container">
+                <h3>🎭 Your Joke / आपका चुटकुला:</h3>
+                <p class="{% if request.form.get('language') == 'hindi' %}hindi{% endif %}">{{ joke }}</p>
+            </div>
+        {% endif %}
+        
+        {% if jokes %}
+            <div class="joke-container">
+                <h3>📜 Joke Collection / चुटकुलों का संग्रह:</h3>
+                <ol>
+                    {% for joke in jokes %}
+                        <li class="{% if request.form.get('language') == 'hindi' %}hindi{% endif %}">{{ joke }}</li>
+                        {% if not loop.last %}<hr style="border-top: 1px dashed #ccc;">{% endif %}
+                    {% endfor %}
+                </ol>
+            </div>
+        {% endif %}
+        
+        <div class="footer">
+            <p>System loaded at: {{ last_updated }}</p>
+            <p>Note: Uses APIs with local fallback jokes when unavailable</p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle category visibility based on language
+        function updateCategoryVisibility() {
+            const isEnglish = document.getElementById('english').checked;
+            document.getElementById('english-category').style.display = isEnglish ? 'block' : 'none';
+        }
+        
+        document.getElementById('english').addEventListener('change', updateCategoryVisibility);
+        document.getElementById('hindi').addEventListener('change', updateCategoryVisibility);
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', updateCategoryVisibility);
+    </script>
+</body>
+</html>
